@@ -1,0 +1,35 @@
+Project explanation
+We created the api code
+(add fastapi service in docker)Now we want to add the fastapi in the docker hub/repo, we will need to make it available so we will be creating the docker file just to deploy the app in docker so docker compose can run  the service, other postgreSql, redis are already hosted on the docker but not fastAPI. (containerized the fastapi)
+Created Dockerfile - recipe and get all the dependencies using pip freeze > requirements.txt
+In Dockerfile add a recipe and expose it to the port 8000 and copy . .  means to copy everything (main.pys)
+Adding the API dockerfile to docker compose and add it in the services (line 92)
+Now the fastApi and worker are in the same network so to call the api we will be using http://fastapi:8000 as the worker localhost dont know the where the service is running.
+Create the etl_pipeline.py and add the extract and timestamp task(it will be used to track when the data is extracted or latest data is extracted) in extract task (fetch the data from api and store it in the temporary folder in the worker host in the form of csv file as a staging layer)
+Run the dag once parsed, to test it use docker exec -it {use the airflow_worker_container_id from docker UI} /bin/sh
+Now we are inside the terminal of worker
+we can see the using cd and ls to check the tmp/raw and csv file
+
+Transform:create the transform folder and then make transform and save it in the folder
+
+Create table for loading: we will build the table and then create connection with the table postgreSQL and will use SQLAlchemy(lets you talk with database) and text which will help us to read the query string (database:postgres)
+a. create a table task 
+
+Now we want a task where we will put the information
+Load: create a load task and read the file in form of df and then load it in the postgresql, create the connection 
+df.to_sql(...) writes a pandas DataFrame into a database table
+
+inside exec for both
+then check in the docker ui for worker for transformed files
+and for postgres container for the table data   
+connect it with the following command
+psql -U airflow -d airflow
+select * from employees
+
+If you want another method to load the data then we have SQLOperators (SQLExecuteQueryOperator)
+In Docker UI under admins we have connection
+Create the connection and give the name , so the conn_id will be name (my_postgresql) it will fetch everything like the username and password, host
+Now running the query
+We can use here Hooks it will help us to write the data as the SQLoperator is just to read the sql (run anything directly)
+Operator runs a SQL statement as its own task, while Hook gives your Python code a database connection so you can fetch and process the data yourself.
+we can also do that parallel with create tables two types that we created 
